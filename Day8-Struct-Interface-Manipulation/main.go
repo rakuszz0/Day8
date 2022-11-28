@@ -53,9 +53,9 @@ func main() {
 	route.HandleFunc("/project", project).Methods("GET")
 	route.HandleFunc("/detail-project/{index}", ProjectDetail).Methods("GET")
 	// ADD PROJECT
-	route.HandleFunc("/project/add-project", AddProject).Methods("POST")
+	route.HandleFunc("/project/create", CreateProject).Methods("POST")
 	// EDIT PROJECT
-	route.HandleFunc("/edit-project/{index}", EditProject).Methods("GET")
+	route.HandleFunc("/edit-project/{index}", UpdateProject).Methods("GET")
 	// DELETE PROJECT
 	route.HandleFunc("/delete-project/{index}", DeleteProject).Methods("GET")
 
@@ -143,7 +143,7 @@ func ProjectDetail(w http.ResponseWriter, r *http.Request) {
 }
 
 // CREATE PROJECT
-func AddProject(w http.ResponseWriter, r *http.Request) {
+func CreateProject(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 
 	if err != nil {
@@ -174,7 +174,7 @@ func AddProject(w http.ResponseWriter, r *http.Request) {
 }
 
 // UPDATE PROJECT
-func EditProject(w http.ResponseWriter, r *http.Request) {
+func UpdateProject(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	tmpl, err := template.ParseFiles("views/edit-project.html")
@@ -183,12 +183,12 @@ func EditProject(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("message : " + err.Error()))
 		return
 	} else {
-		var editData = Project{}
+		var updateData = Project{}
 		index, _ := strconv.Atoi(mux.Vars(r)["index"])
 
 		for i, data := range ProjectList {
 			if index == i {
-				editData = Project{
+				updateData = Project{
 					ProjectName:         data.ProjectName,
 					ProjectStartDate:    ReturnDate(data.ProjectStartDate),
 					ProjectEndDate:      ReturnDate(data.ProjectEndDate),
@@ -199,7 +199,7 @@ func EditProject(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		data := map[string]interface{}{
-			"editData": editData,
+			"updateData": updateData,
 		}
 		w.WriteHeader(http.StatusOK)
 		tmpl.Execute(w, data)
