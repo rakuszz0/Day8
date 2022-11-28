@@ -73,8 +73,12 @@ func home(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
+	response := map[string]interface{}{
+		"ProjectList": ProjectList,
+	}
+
 	w.WriteHeader(http.StatusOK)
-	tmpl.Execute(w, nil)
+	tmpl.Execute(w, response)
 }
 
 func contact(w http.ResponseWriter, _ *http.Request) {
